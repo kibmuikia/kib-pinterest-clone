@@ -1,17 +1,22 @@
 package kibdev.sample.pinterest
 
 import android.os.Bundle
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import kibdev.sample.pinterest.databinding.ActivityScrollingBinding
+import kibdev.sample.pinterest.network.NetworkResult
+import kibdev.sample.pinterest.utils.launchSafely
+import kibdev.sample.pinterest.viewmodels.UnsplashViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class ScrollingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityScrollingBinding
+    private val unsplashViewmodel by viewModel<UnsplashViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +30,7 @@ class ScrollingActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+        initGetPhotos()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -41,6 +47,28 @@ class ScrollingActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun initGetPhotos() {
+        Timber.e(": init")
+        lifecycleScope.launchSafely {
+            Timber.e(": calling api photos")
+            when (val getPhotosResponse = unsplashViewmodel.getPhotos()) {
+                is NetworkResult.Success -> {
+                    val numPhotos = getPhotosResponse.data.size
+                    Timber.e(": got photos[ $numPhotos ]")
+                    getPhotosResponse.data?.forEach { unsplashPhoto ->
+                        Timber.e(": unsplashPhoto[ ${unsplashPhoto.toString()} ]")
+                    }
+                }
+                is NetworkResult.NetworkError -> {
+                    Timber.e(": Network error encountered")
+                }
+                is NetworkResult.ServerError -> {
+                    Timber.e(": Server error encountered")
+                }
+            }
         }
     }
 }
