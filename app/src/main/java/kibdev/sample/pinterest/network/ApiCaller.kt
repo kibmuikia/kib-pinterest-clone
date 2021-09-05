@@ -15,6 +15,7 @@ suspend fun <T> safeApiCall(
         NetworkResult.Success(apiCall.invoke())
     } catch (throwable: Throwable) {
         Timber.e(throwable)
+        throwable.printStackTrace()
         when (throwable) {
             is IOException -> NetworkResult.NetworkError
             is HttpException -> {

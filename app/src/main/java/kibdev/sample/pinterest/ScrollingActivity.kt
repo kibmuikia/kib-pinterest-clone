@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import kibdev.sample.pinterest.databinding.ActivityScrollingBinding
 import kibdev.sample.pinterest.network.NetworkResult
 import kibdev.sample.pinterest.utils.launchSafely
+import kibdev.sample.pinterest.utils.toast
 import kibdev.sample.pinterest.viewmodels.UnsplashViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -51,15 +52,19 @@ class ScrollingActivity : AppCompatActivity() {
     }
 
     private fun initGetPhotos() {
-        Timber.e(": init")
         lifecycleScope.launchSafely {
-            Timber.e(": calling api photos")
             when (val getPhotosResponse = unsplashViewmodel.getPhotos()) {
                 is NetworkResult.Success -> {
-                    val numPhotos = getPhotosResponse.data.size
-                    Timber.e(": got photos[ $numPhotos ]")
-                    getPhotosResponse.data?.forEach { unsplashPhoto ->
-                        Timber.e(": unsplashPhoto[ ${unsplashPhoto.toString()} ]")
+                    getPhotosResponse.data.apply {
+                        val photos = this.toMutableList()
+                        if (size > 0) {
+                            toast("Got, ${photos.size}, photos.")
+                            this.forEach {
+                                Timber.e(": [ $this ]")
+                            }
+                        } else {
+                            toast("No photos received!")
+                        }
                     }
                 }
                 is NetworkResult.NetworkError -> {

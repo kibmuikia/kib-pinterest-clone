@@ -18,7 +18,7 @@ class UnsplashViewModel(
 
     suspend fun getPhotos(
         page: Int = 1,
-        per_page: Int = 1,
+        per_page: Int = 10,
         order_by: String = "latest"
     ) = unsplashRepository.getPhotos(page, per_page, order_by)
 
