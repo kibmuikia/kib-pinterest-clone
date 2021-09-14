@@ -90,4 +90,6 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="label_home_activity">Home Activity</string>
+    <string name="label_home_fragment">Home Fragment</string>
 </resources>

@@ -1,6 +1,7 @@
-package kibdev.sample.pinterest
+package kibdev.sample.pinterest.app
 
 import android.app.Application
+import kibdev.sample.pinterest.BuildConfig
 import kibdev.sample.pinterest.di.appModules
 import kibdev.sample.pinterest.di.dataModules
 import org.jetbrains.annotations.NotNull
